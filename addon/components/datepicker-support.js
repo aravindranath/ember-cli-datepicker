@@ -5,15 +5,14 @@ export default Ember.Mixin.create({
   value: null,
   // add the observed properties
   minViewMode: undefined,
+  maxViewMode: undefined,
   format: undefined,
   language: undefined,
   startDate: undefined,
   endDate: undefined,
-  customParser: function(value) {
-    return value;
-  },
 
   setupBootstrapDatepicker: Ember.on('didInsertElement', function() {
+    var self = this;
 
     this.$().
       datepicker({
@@ -27,7 +26,7 @@ export default Ember.Mixin.create({
         enableOnReadonly: this.get('enableOnReadonly'),
         endDate: this.get('endDate'),
         forceParse: this.get('forceParse'),
-        format: this._toString(this.get('format')),
+        format: this.get('format'),
         immediateUpdates: this.get('immediateUpdates'),
         keyboardNavigation: this.get('keyboardNavigation'),
         language: this.get('language') || undefined,
@@ -45,27 +44,15 @@ export default Ember.Mixin.create({
         weekStart: this.get('weekStart'),
         datesDisabled: this.get('datesDisabled')
       }).
-      on('changeDate', event => {
-        Ember.run(() => {
-          this._didChangeDate(event);
+      on('changeDate', function(event) {
+        Ember.run(function() {
+          self._didChangeDate(event);
         });
       }).
-      on('focusout', event => {
-        this.sendAction('focus-out', this, event);
-      }).
-      on('focusin', event => {
-        this.sendAction('focus-in', this, event);
-      }).
-      on('clearDate', event => {
-        Ember.run(() => {
-          this._didChangeDate(event);
-        });
-      }).
-      on('show', () => {
-        this.sendAction('show');
-      }).
-      on('hide', () => {
-        this.sendAction('hide');
+      on('input', function() {
+        if (!self.$().val()) {
+          self.set('value', null);
+        }
       });
 
     this._updateDatepicker();
@@ -92,11 +79,7 @@ export default Ember.Mixin.create({
 
     this.set('mustUpdateInput', false);
     this.set('value', value);
-    if (event.type === 'clearDate') {
-      this.sendAction('clearDate');
-    } else {
-      this.sendAction('changeDate', value);
-    }
+    this.sendAction('changeDate', value);
   },
 
   _addObservers: Ember.on('didInsertElement', function() {
@@ -125,27 +108,30 @@ export default Ember.Mixin.create({
       this.$().data('datepicker')._process_options({minViewMode: this.get('minViewMode')});
       this._updateDatepicker();
     });
+    
+    this.addObserver('maxViewMode', function() {
+      this.$().datepicker('maxViewMode', this.get('maxViewMode'));
+      this.$().data('datepicker')._process_options({maxViewMode: this.get('maxViewMode')});
+      this._updateDatepicker();
+    });
 
     this.addObserver('format', function() {
-      let format = this._toString(this.get('format'));
-      this.$().datepicker('format', format);
-      this.$().data('datepicker')._process_options({format: format});
+      this.$().datepicker('format', this.get('format'));
+      this.$().data('datepicker')._process_options({format: this.get('format')});
       this._updateDatepicker();
     });
   }),
 
   _updateDatepicker: function() {
-    var element = this.$(),
+    var self = this,
+        element = this.$(),
         value = this.get('value'),
-        customParser = this.get('customParser'),
         dates = [];
 
     if (!this.get('mustUpdateInput')) {
       this.set('mustUpdateInput', true);
       return;
     }
-
-    value = customParser(value);
 
     switch (Ember.typeOf(value)) {
       case 'array':
@@ -157,8 +143,8 @@ export default Ember.Mixin.create({
       default:
         dates = [null];
     }
-    dates = dates.map(date => {
-      return (Ember.isNone(date)) ? null : this._getDateCloneWithNoTime(date);
+    dates = dates.map(function(date) {
+      return (Ember.isNone(date)) ? null : self._getDateCloneWithNoTime(date);
     });
 
     element.datepicker
@@ -177,23 +163,5 @@ export default Ember.Mixin.create({
     clone.setMilliseconds(0);
 
     return clone;
-  },
-
-  /**
-   * Fix Issue #59
-   * _toString Checks and converts the input object and returns  a String if it is required and feasible
-   * @param  {Object} obj The object to check
-   * @return {Object} The object as a String
-   */
-  _toString: function (obj) {
-    if (typeof obj !== typeof Undefined && obj !== typeof String) {
-      if (typeof obj.toString === typeof Function) {
-        obj = obj.toString();
-      } else {
-        // No toString() method available - There is nothing else that can be done
-        throw new Error("At _toString() (datepicker-support.js) - No toString() method available for the passed object.");
-      }
-    }
-    return obj;
   }
 });
