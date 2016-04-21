@@ -42,7 +42,47 @@ export default Ember.Mixin.create({
         todayHighlight: this.get('todayHighlight'),
         toggleActive: this.get('toggleActive'),
         weekStart: this.get('weekStart'),
-        datesDisabled: this.get('datesDisabled')
+        datesDisabled: this.get('datesDisabled'),
+        datesHighlighted : this.get('datesHighlighted'),
+        beforeShowDay: function (date) {
+            var dmy; 
+            var flag = false;
+            var enabled = false;
+            var tooltip = '';
+            if(this.format === 'mm/dd/yyyy' && this.datesHighlighted) {
+              dmy = (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear();
+              this.datesHighlighted.forEach(function(dateSelectedForHighlight) {
+                var higlightDate = new Date(dateSelectedForHighlight.date);
+                var newDateFormat = (higlightDate.getUTCMonth()+1) + '-' + higlightDate.getDate() + '-' + higlightDate.getFullYear();
+                dateSelectedForHighlight.date = newDateFormat;
+                if(dateSelectedForHighlight.date === dmy) { 
+                  flag = true;
+                  dateSelectedForHighlight.enabled === true ? enabled = true : enabled = false;
+                  tooltip = dateSelectedForHighlight.tooltip
+                }
+              });
+            } else if(this.format === 'dd/mm/yyyy' && this.datesHighlighted) {
+              dmy = (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear();
+              this.datesHighlighted.forEach(function(dateSelectedForHighlight) {
+                var higlightDate = new Date(dateSelectedForHighlight.date);
+                var newDateFormat = (higlightDate.getUTCMonth()+1) + '-' + higlightDate.getDate() + '-' + higlightDate.getFullYear();
+                dateSelectedForHighlight.date = newDateFormat;
+                if(dateSelectedForHighlight.date === dmy) { 
+                  flag = true;
+                  dateSelectedForHighlight.enabled === true ? enabled = true : enabled = false;
+                  tooltip = dateSelectedForHighlight.tooltip
+                }
+              });
+            }
+
+            if(flag) {
+              return {
+                enabled: enabled,
+                classes: 'highlighted',
+                tooltip: tooltip
+              };
+            }
+        },
       }).
       on('changeDate', function(event) {
         Ember.run(function() {
