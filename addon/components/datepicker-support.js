@@ -102,7 +102,7 @@ export default Ember.Mixin.create({
     this.$().datepicker('remove');
   }),
 
-  didChangeValue: Ember.observer('value', function() {
+  didChangeValue: Ember.observer('value', function(value) {
     this.sendAction('inputChanged', value);
     this._updateDatepicker();
   }),
