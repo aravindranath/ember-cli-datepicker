@@ -103,6 +103,7 @@ export default Ember.Mixin.create({
   }),
 
   didChangeValue: Ember.observer('value', function() {
+    this.sendAction('inputChanged', value);
     this._updateDatepicker();
   }),
 
