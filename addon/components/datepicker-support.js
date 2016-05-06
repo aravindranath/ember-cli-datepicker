@@ -10,6 +10,7 @@ export default Ember.Mixin.create({
   language: undefined,
   startDate: undefined,
   endDate: undefined,
+  setDate: undefined,
 
   setupBootstrapDatepicker: Ember.on('didInsertElement', function() {
     var self = this;
@@ -25,6 +26,7 @@ export default Ember.Mixin.create({
         disableTouchKeyboard: this.get('disableTouchKeyboard'),
         enableOnReadonly: this.get('enableOnReadonly'),
         endDate: this.get('endDate'),
+        setDate: this.get('setDate'),
         forceParse: this.get('forceParse'),
         format: this.get('format'),
         immediateUpdates: this.get('immediateUpdates'),
