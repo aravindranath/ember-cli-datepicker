@@ -26,7 +26,6 @@ export default Ember.Mixin.create({
         disableTouchKeyboard: this.get('disableTouchKeyboard'),
         enableOnReadonly: this.get('enableOnReadonly'),
         endDate: this.get('endDate'),
-        setDate: this.get('setDate'),
         forceParse: this.get('forceParse'),
         format: this.get('format'),
         immediateUpdates: this.get('immediateUpdates'),
@@ -163,6 +162,11 @@ export default Ember.Mixin.create({
       this.$().data('datepicker')._process_options({format: this.get('format')});
       this._updateDatepicker();
     });
+
+    if(this.get('setDate')) {
+      this.set('value', new Date(this.get('setDate')));
+      this.sendAction('changeDate', this.get('value'));
+    }
   }),
 
   _updateDatepicker: function() {
