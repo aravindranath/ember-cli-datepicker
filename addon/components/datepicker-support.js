@@ -46,7 +46,7 @@ export default Ember.Mixin.create({
         datesDisabled: this.get('datesDisabled'),
         datesHighlighted : this.get('datesHighlighted'),
         beforeShowDay: function (date) {
-            var dmy; 
+            var dmy;
             var flag = false;
             var enabled = false;
             var tooltip = '';
@@ -54,9 +54,9 @@ export default Ember.Mixin.create({
               dmy = (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear();
               this.datesHighlighted.forEach(function(dateSelectedForHighlight) {
                 var higlightDate = new Date(dateSelectedForHighlight.date);
-                var newDateFormat = (higlightDate.getUTCMonth()+1) + '-' + higlightDate.getDate() + '-' + higlightDate.getFullYear();
+                var newDateFormat = (higlightDate.getMonth()+1) + '-' + higlightDate.getDate() + '-' + higlightDate.getFullYear();
                 dateSelectedForHighlight.date = newDateFormat;
-                if(dateSelectedForHighlight.date === dmy) { 
+                if(dateSelectedForHighlight.date === dmy) {
                   flag = true;
                   dateSelectedForHighlight.enabled === true ? enabled = true : enabled = false;
                   tooltip = dateSelectedForHighlight.tooltip
@@ -66,9 +66,9 @@ export default Ember.Mixin.create({
               dmy = (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear();
               this.datesHighlighted.forEach(function(dateSelectedForHighlight) {
                 var higlightDate = new Date(dateSelectedForHighlight.date);
-                var newDateFormat = (higlightDate.getUTCMonth()+1) + '-' + higlightDate.getDate() + '-' + higlightDate.getFullYear();
+                var newDateFormat = (higlightDate.getMonth()+1) + '-' + higlightDate.getDate() + '-' + higlightDate.getFullYear();
                 dateSelectedForHighlight.date = newDateFormat;
-                if(dateSelectedForHighlight.date === dmy) { 
+                if(dateSelectedForHighlight.date === dmy) {
                   flag = true;
                   dateSelectedForHighlight.enabled === true ? enabled = true : enabled = false;
                   tooltip = dateSelectedForHighlight.tooltip
@@ -150,7 +150,7 @@ export default Ember.Mixin.create({
       this.$().data('datepicker')._process_options({minViewMode: this.get('minViewMode')});
       this._updateDatepicker();
     });
-    
+
     this.addObserver('maxViewMode', function() {
       this.$().datepicker('maxViewMode', this.get('maxViewMode'));
       this.$().data('datepicker')._process_options({maxViewMode: this.get('maxViewMode')});
