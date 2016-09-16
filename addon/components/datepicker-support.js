@@ -11,6 +11,8 @@ export default Ember.Mixin.create({
   startDate: undefined,
   endDate: undefined,
   setDate: undefined,
+  nextArrowIcon: '&#10095',
+  prevArrowIcon: '&#10094',
 
   setupBootstrapDatepicker: Ember.on('didInsertElement', function() {
     var self = this;
@@ -45,6 +47,10 @@ export default Ember.Mixin.create({
         weekStart: this.get('weekStart'),
         datesDisabled: this.get('datesDisabled'),
         datesHighlighted : this.get('datesHighlighted'),
+        templates : {
+          leftArrow: this.get('prevArrowIcon'),
+          rightArrow: this.get('nextArrowIcon')
+        },
         beforeShowDay: function (date) {
             var dmy;
             var flag = false;
