@@ -56,7 +56,7 @@ export default Ember.Mixin.create({
             var flag = false;
             var enabled = false;
             var tooltip = '';
-            if(this.format === 'mm/dd/yyyy' && this.datesHighlighted) {
+            if((this.format === 'mm/dd/yyyy' || this.format === 'MM/DD/YYYY') && this.datesHighlighted) {
               dmy = (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear();
               this.datesHighlighted.forEach(function(dateSelectedForHighlight) {
                 var higlightDate = new Date(dateSelectedForHighlight.date);
@@ -68,7 +68,7 @@ export default Ember.Mixin.create({
                   tooltip = dateSelectedForHighlight.tooltip
                 }
               });
-            } else if(this.format === 'dd/mm/yyyy' && this.datesHighlighted) {
+            } else if((this.format === 'dd/mm/yyyy' || this.format === 'DD/MM/YYYY') && this.datesHighlighted) {
               dmy = (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear();
               this.datesHighlighted.forEach(function(dateSelectedForHighlight) {
                 var higlightDate = new Date(dateSelectedForHighlight.date);
@@ -170,8 +170,16 @@ export default Ember.Mixin.create({
     });
 
     if(this.get('setDate')) {
-      this.set('value', new Date(this.get('setDate')));
-      this.sendAction('changeDate', this.get('value'));
+      var value = null;
+      if(this.format === 'mm/dd/yyyy' || this.format === 'MM/DD/YYYY') {
+        value = new Date(this.get('setDate'));
+      } else if(this.format === 'dd/mm/yyyy' || this.format === 'DD/MM/YYYY') {
+        var setDate = this.get('setDate').split("/");
+        value = new Date(setDate[2], setDate[1] - 1, setDate[0]);
+      }
+      this.set('mustUpdateInput', false);
+      this.set('value', value);
+      this.sendAction('changeDate', value);
     }
   }),
 
