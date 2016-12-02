@@ -170,16 +170,18 @@ export default Ember.Mixin.create({
     });
 
     if(this.get('setDate')) {
-      var value = null;
-      if(this.format === 'mm/dd/yyyy' || this.format === 'MM/DD/YYYY') {
-        value = new Date(this.get('setDate'));
-      } else if(this.format === 'dd/mm/yyyy' || this.format === 'DD/MM/YYYY') {
-        var setDate = this.get('setDate').split("/");
-        value = new Date(setDate[2], setDate[1] - 1, setDate[0]);
-      }
-      this.set('mustUpdateInput', false);
-      this.set('value', value);
-      this.sendAction('changeDate', value);
+      Ember.run.scheduleOnce('afterRender', this, function() {
+        var value = null;
+        if(this.format === 'mm/dd/yyyy' || this.format === 'MM/DD/YYYY') {
+          value = new Date(this.get('setDate'));
+        } else if(this.format === 'dd/mm/yyyy' || this.format === 'DD/MM/YYYY') {
+          var setDate = this.get('setDate').split("/");
+          value = new Date(setDate[2], setDate[1] - 1, setDate[0]);
+        }
+        this.set('mustUpdateInput', false);
+        this.set('value', value);
+        this.sendAction('changeDate', value);
+      });
     }
   }),
 
