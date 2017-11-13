@@ -16,7 +16,7 @@
 module.exports = {
   name: 'ember-cli-bootstrap-datepicker',
 
-  included: function(app) {
+  included() {
     let findHost = this._findHost || findHostShim;
     let app = findHost.call(this);
 
